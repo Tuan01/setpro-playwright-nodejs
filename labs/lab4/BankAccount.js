@@ -30,8 +30,7 @@ while(isAccountExisting){
         }
     } else if (userOption == 2){
         let accountNumber  =  readline.question('Enter the account number: ')
-        const amount = parseFloat(readline.question('Enter withdrawal amount:'));
-        updateBalance(accountNumber, amount);
+        updateBalance(accountNumber);
     }
 }
 console.log("See you again!")
@@ -61,16 +60,30 @@ function findAccountByAccountNumber(accountNumber){
     return null;
 }
 
- function updateBalance(accountNumber,amount){
-    const account = findAccountByAccountNumber(accountNumber)
-    if (account) {
-        if (amount > 0 && account.balance >= amount){
-            account.balance = account.balance - amount;
-            console.log('Withdrawn successfully. New balance:', account.balance);
+function updateBalance(accountNumber) {
+    let accountIndex = -1;
+    for (let i = 0; i < bankAccounts.length; i++) {
+        if (bankAccounts[i].accountNumber === accountNumber) {
+            accountIndex = i;
+            break;
+        }
+    }
+
+    if (accountIndex !== -1) {
+        const amount = parseFloat(readline.question('Enter withdrawal amount:'));
+        if (amount > 0 && bankAccounts[accountIndex].balance >= amount) {
+            bankAccounts[accountIndex].balance -= amount;
+            console.log('Withdrawn successfully. New balance:', bankAccounts[accountIndex].balance);
+            const updatedAccountInfo = findAccountByAccountNumber(accountNumber);
+            if (updatedAccountInfo){
+                console.log('Updated account info:', updatedAccountInfo);
+            } else {
+                console.log("Account not found!")
+            }
         } else {
             console.log('Invalid amount or insufficient funds!')
         }
     } else {
         console.log('Account not found');
     }
- }
+}
